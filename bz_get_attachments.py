@@ -8,7 +8,7 @@
 # credentials for redhat.bugzilla.com, and then will
 # retrieve the attachments for <bug_number>.
 #
-# Attachments are saved to $HOME/bz_issues/<bug_number>/
+# Attachments are saved to $HOME/bugzilla/<bug_number>/
 # If the directory does not exist, it will be created.
 
 import bugzilla
