@@ -40,7 +40,7 @@ path = Path(Path.home(), Path('bugzilla'), Path(bugno))
 print(f"Creating directory {path} if it does not already exist")
 os.makedirs(path, exist_ok=True)
 
-print(f"Retrieving attachments")
+print("Retrieving attachments")
 atts = bug.get_attachments()
 for att in atts:
     data = att['data']
@@ -50,6 +50,7 @@ for att in atts:
         import base64
         content = base64.decode(data)
 
-    with open(f'{os.fspath(path)}/{att["file_name"]}', 'wb') as fi:
+    write_path = Path(path, Path(att['file_name']))
+    with open(write_path, 'wb') as fi:
         print(f'Writing {fi.name}')
         fi.write(content)
