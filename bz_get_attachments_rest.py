@@ -27,16 +27,14 @@ if len(sys.argv) < 2:
 
 bugno = sys.argv[1]
 
-url = 'https://bugzilla.redhat.com/'
+s = requests.Session()
+
 api_key = 'OQX2LlhFW8O0ois3IaLjs6XLU1fifPi20cR8JfVe'
-payload = {'api_key': api_key}
-r = requests.get(url + 'rest/login', params=payload)
+s.headers.update({'api_key': api_key})
 
-if r.status_code != 200:
-    print("Failed to log in")
-    sys.exit(1)
+url = 'https://bugzilla.redhat.com/'
 
-r = requests.get(url + f'rest/bug/{bugno}/attachment')
+r = s.get(url + f'rest/bug/{bugno}/attachment')
 
 if r.status_code != 200:
     print("Failed to retrieve attachments")
