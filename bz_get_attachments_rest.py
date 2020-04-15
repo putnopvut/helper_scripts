@@ -47,8 +47,6 @@ path = Path(Path.home(), Path('bugzilla'), Path(bugno))
 print(f"Creating directory {path} if it does not already exist")
 os.makedirs(path, exist_ok=True)
 
-print(r.json())
-
 for att in r.json()['bugs'][bugno]:
     write_path = Path(path, Path(att['file_name']))
     with open(write_path, 'wb') as fi:
