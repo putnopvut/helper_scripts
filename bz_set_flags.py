@@ -4,40 +4,67 @@
 # Usage:
 #  bz_set_flags.py <bug> <flag1> <value1> [<flag2> <value2> ...]
 #
-# This script will prompt the user for login
-# credentials for redhat.bugzilla.com and then
-# set the flags provided for the given <bug>.
+# This script will set the flags provided for the given <bug>.
+#
+# This script uses a bugzilla API key for authentication. The
+# API key should be stored in a config file like so:
+#
+# [bugzilla.redhat.com]
+# api_key = <key>
+#
+# You can generate an API key at
+# https://bugzilla.redhat.com/userprefs.cgi?tab=apikey
+#
+# The script searches the following files for configuration
+#   ~/.config/bugzillarc
+#   ~/.bugzillarc
+#   $PWD/.bugzillarc
+#
+# The files are searched in that order.
 
-import bugzilla
+
 import sys
-
-URL = "bugzilla.redhat.com"
-bzapi = bugzilla.Bugzilla(URL)
+import requests
+import configparser
+from pathlib import Path
 
 if len(sys.argv) < 4:
     print("Please include BZ bug number, plus at least one flag and value.")
     sys.exit(1)
 
-if len(sys.argv[2:]) % 2 != 0:
+bugno = sys.argv[1]
+flag_args = sys.argv[2:]
+
+if len(flag_args) % 2 != 0:
     print(f"All flags must have values provided")
     sys.exit(1)
 
-bugno = sys.argv[1]
+config = configparser.ConfigParser()
+paths = [
+    Path(Path.home(), '.config', 'bugzillarc'),
+    Path(Path.home(), '.bugzillarc'),
+    Path('.bugzillarc'),
+]
 
-it = iter(sys.argv[2:])
-flags = {flag: next(it) for flag in it}
+config.read(paths)
+domain = 'bugzilla.redhat.com'
 
-if not bzapi.logged_in:
-    bzapi.interactive_login()
-
-print(f"Retrieving bug {bugno}")
 try:
-    bug = bzapi.getbug(bugno)
-except Exception:
-    print(f"Failed to retrieve bug {bugno}. Exiting")
+    api_key = config[domain]['api_key']
+except KeyError:
+    print("No configured api_key found")
     sys.exit(1)
 
+s = requests.Session()
+s.headers.update({'api_key': api_key})
+
+it = iter(flag_args)
+flags = [{'name': flag, 'status': next(it)} for flag in it]
+
 print(f"Setting the following flags on {bugno}:")
-for k, v in flags.items():
-    print(f"  {k} = '{v}'")
-bug.updateflags(flags)
+for f in flags:
+    print(f"  {f['name']}: {f['status']}")
+
+r = s.put(f'https://{domain}/rest/bug/{bugno}', json={'flags': flags})
+
+r.raise_for_status()
