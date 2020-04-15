@@ -48,7 +48,7 @@ for att in atts:
         content = data.data
     else:
         import base64
-        content = base64.decode(data)
+        content = base64.b64decode(data)
 
     write_path = Path(path, Path(att['file_name']))
     with open(write_path, 'wb') as fi:
