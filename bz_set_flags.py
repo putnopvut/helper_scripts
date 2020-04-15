@@ -25,8 +25,7 @@
 
 import sys
 import requests
-import configparser
-from pathlib import Path
+import utilities
 
 if len(sys.argv) < 4:
     print("Please include BZ bug number, plus at least one flag and value.")
@@ -39,19 +38,10 @@ if len(flag_args) % 2 != 0:
     print(f"All flags must have values provided")
     sys.exit(1)
 
-config = configparser.ConfigParser()
-paths = [
-    Path(Path.home(), '.config', 'bugzillarc'),
-    Path(Path.home(), '.bugzillarc'),
-    Path('.bugzillarc'),
-]
-
-config.read(paths)
 domain = 'bugzilla.redhat.com'
-
 try:
-    api_key = config[domain]['api_key']
-except KeyError:
+    api_key = utilities.get_api_key(domain)
+except Exception:
     print("No configured api_key found")
     sys.exit(1)
 

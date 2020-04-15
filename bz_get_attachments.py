@@ -31,7 +31,7 @@ import sys
 import os
 from pathlib import Path
 import base64
-import configparser
+import utilities
 
 if len(sys.argv) < 2:
     print("Please include a BZ bug number")
@@ -39,30 +39,19 @@ if len(sys.argv) < 2:
 
 bugno = sys.argv[1]
 
-config = configparser.ConfigParser()
-paths = [
-    Path(Path.home(), '.config', 'bugzillarc'),
-    Path(Path.home(), '.bugzillarc'),
-    Path('.bugzillarc'),
-]
-
-config.read(paths)
 domain = 'bugzilla.redhat.com'
-
 try:
-    api_key = config[domain]['api_key']
-except KeyError:
+    api_key = utilities.get_api_key(domain)
+except Exception:
     print("No configured api_key found")
     sys.exit(1)
 
 s = requests.Session()
 s.headers.update({'api_key': api_key})
 
-url = f'https://{domain}'
+r = s.get(f'https://{domain}/rest/bug/{bugno}/attachment')
 
-r = s.get(f'{url}/rest/bug/{bugno}/attachment')
-
-if r.status_code != 200:
+if not r.ok:
     print("Failed to retrieve attachments")
     sys.exit(1)
 
