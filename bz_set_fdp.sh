@@ -1,3 +1,6 @@
 #!/bin/sh
 
-bz_set_flags.py $1 fast-datapath-rhel-7 +
+for bug in "$@"
+do
+	./bz_set_flags.py "$bug" fast-datapath-rhel-7 +
+done
