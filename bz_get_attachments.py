@@ -26,42 +26,38 @@
 # The files are searched in that order.
 
 
-import requests
 import sys
 import os
 from pathlib import Path
 import base64
-import utilities
+from utilities import open_session, REST_URL
 
-if len(sys.argv) < 2:
-    print("Please include a BZ bug number")
-    sys.exit(1)
 
-bugno = sys.argv[1]
+def get_bz_attachments(session, bugno):
+    r = session.get(f'{REST_URL}/bug/{bugno}/attachment')
 
-domain = 'bugzilla.redhat.com'
-try:
-    api_key = utilities.get_api_key(domain)
-except Exception:
-    print("No configured api_key found")
-    sys.exit(1)
+    r.raise_for_status()
+    return r.json()['bugs'][bugno]
 
-s = requests.Session()
-s.headers.update({'api_key': api_key})
 
-r = s.get(f'https://{domain}/rest/bug/{bugno}/attachment')
+def write_bz_attachments(attachments, path):
+    print(f"Creating directory {path} if it does not already exist")
+    os.makedirs(path, exist_ok=True)
 
-if not r.ok:
-    print("Failed to retrieve attachments")
-    sys.exit(1)
+    for att in attachments:
+        write_path = Path(path, Path(att['file_name']))
+        with open(write_path, 'wb') as att_file:
+            print(f'Writing {att_file.name}')
+            att_file.write(base64.b64decode(att['data']))
 
-path = Path(Path.home(), Path('bugzilla'), Path(bugno))
 
-print(f"Creating directory {path} if it does not already exist")
-os.makedirs(path, exist_ok=True)
+if __name__ == '__main__':
+    print("hi")
+    if len(sys.argv) < 2:
+        print("Please include a BZ bug number")
+        sys.exit(1)
 
-for att in r.json()['bugs'][bugno]:
-    write_path = Path(path, Path(att['file_name']))
-    with open(write_path, 'wb') as fi:
-        print(f'Writing {fi.name}')
-        fi.write(base64.b64decode(att['data']))
+    bugno = sys.argv[1]
+    session = open_session()
+    att = get_bz_attachments(session, bugno)
+    write_bz_attachments(att, Path(Path.home(), Path('bugzilla'), Path(bugno)))

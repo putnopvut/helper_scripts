@@ -24,37 +24,30 @@
 
 
 import sys
-import requests
-import utilities
+from utilities import open_session, REST_URL
 
-if len(sys.argv) < 4:
-    print("Please include BZ bug number, plus at least one flag and value.")
-    sys.exit(1)
 
-bugno = sys.argv[1]
-flag_args = sys.argv[2:]
+def set_bz_flag(session, bugno, flag_name, flag_val):
+    flags = [{'name': flag_name, 'status': flag_val}]
 
-if len(flag_args) % 2 != 0:
-    print(f"All flags must have values provided")
-    sys.exit(1)
+    print(f"Setting the following flags on {bugno}:")
+    for f in flags:
+        print(f"  {f['name']}: {f['status']}")
 
-domain = 'bugzilla.redhat.com'
-try:
-    api_key = utilities.get_api_key(domain)
-except Exception:
-    print("No configured api_key found")
-    sys.exit(1)
+    r = session.put(f'{REST_URL}/rest/bug/{bugno}', json={'flags': flags})
 
-s = requests.Session()
-s.headers.update({'api_key': api_key})
+    r.raise_for_status()
 
-it = iter(flag_args)
-flags = [{'name': flag, 'status': next(it)} for flag in it]
 
-print(f"Setting the following flags on {bugno}:")
-for f in flags:
-    print(f"  {f['name']}: {f['status']}")
+if __name__ == '__main__':
+    if len(sys.argv) < 4:
+        print("Please include BZ bug number, a flag, and its value.")
+        sys.exit(1)
 
-r = s.put(f'https://{domain}/rest/bug/{bugno}', json={'flags': flags})
+    bugno = sys.argv[1]
+    flag_name = sys.argv[2]
+    flag_val = sys.argv[3]
 
-r.raise_for_status()
+    session = open_session()
+
+    set_bz_flag(session, bugno, flag_name, flag_val)
