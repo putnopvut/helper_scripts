@@ -52,7 +52,6 @@ def write_bz_attachments(attachments, path):
 
 
 if __name__ == '__main__':
-    print("hi")
     if len(sys.argv) < 2:
         print("Please include a BZ bug number")
         sys.exit(1)
