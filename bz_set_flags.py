@@ -34,7 +34,7 @@ def set_bz_flag(session, bugno, flag_name, flag_val):
     for f in flags:
         print(f"  {f['name']}: {f['status']}")
 
-    r = session.put(f'{REST_URL}/rest/bug/{bugno}', json={'flags': flags})
+    r = session.put(f'{REST_URL}/bug/{bugno}', json={'flags': flags})
 
     r.raise_for_status()
 

@@ -39,7 +39,7 @@ from utilities import open_session, REST_URL
 def set_bz_status(session, bugno, status):
     print(f"Setting the status on {bugno} to {status}:")
 
-    r = session.put(f'{REST_URL}/rest/bug/{bugno}', json={'status': status})
+    r = session.put(f'{REST_URL}/bug/{bugno}', json={'status': status})
 
     r.raise_for_status()
 
