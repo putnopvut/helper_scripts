@@ -24,17 +24,7 @@
 
 
 from argparse import ArgumentParser
-from utilities import open_session, REST_URL
-
-
-def update_bz_keywords(session, bugno, keywords, action):
-    print(f"{action} keywords {keywords} on {bugno}")
-
-    params = {}
-    params[action] = keywords
-    r = session.put(f'{REST_URL}/bug/{bugno}', json={'keywords': params})
-
-    r.raise_for_status()
+from utilities import open_session, update_bz_keywords
 
 
 if __name__ == '__main__':

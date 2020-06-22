@@ -24,19 +24,7 @@
 
 
 import sys
-from utilities import open_session, REST_URL
-
-
-def set_bz_flag(session, bugno, flag_name, flag_val):
-    flags = [{'name': flag_name, 'status': flag_val}]
-
-    print(f"Setting the following flags on {bugno}:")
-    for f in flags:
-        print(f"  {f['name']}: {f['status']}")
-
-    r = session.put(f'{REST_URL}/bug/{bugno}', json={'flags': flags})
-
-    r.raise_for_status()
+from utilities import open_session, set_bz_flag
 
 
 if __name__ == '__main__':

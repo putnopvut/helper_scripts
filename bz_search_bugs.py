@@ -26,14 +26,7 @@
 # The files are searched in that order.
 
 from argparse import ArgumentParser
-from utilities import open_session, REST_URL
-
-
-def search_bz(session, params):
-    r = session.get(f'{REST_URL}/bug', params=params)
-    r.raise_for_status()
-    return r.json()['bugs']
-
+from utilities import open_session, search_bz
 
 if __name__ == '__main__':
     search_fields = [
