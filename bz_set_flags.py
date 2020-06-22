@@ -23,19 +23,20 @@
 # The files are searched in that order.
 
 
-import sys
+from argparse import ArgumentParser
 from utilities import open_session, set_bz_flag
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
-        print("Please include BZ bug number, a flag, and its value.")
-        sys.exit(1)
-
-    bugno = sys.argv[1]
-    flag_name = sys.argv[2]
-    flag_val = sys.argv[3]
+    parser = ArgumentParser(description="Set a flag on a bug")
+    parser.add_argument('bug_number', dest='bugno', required=True,
+                        help="Bugzilla bug ID")
+    parser.add_argument('flag_name', required=True,
+                        help="Name of flag to set")
+    parser.add_argument('flag_value', dest='flag_val', required=True,
+                        help="Value of flag to set")
+    args = parser.parse_args()
 
     session = open_session()
 
-    set_bz_flag(session, bugno, flag_name, flag_val)
+    set_bz_flag(session, args.bugno, args.flag_name, args.flag_val)

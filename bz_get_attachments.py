@@ -26,7 +26,7 @@
 # The files are searched in that order.
 
 
-import sys
+from argparse import ArgumentParser
 import os
 from pathlib import Path
 import base64
@@ -52,11 +52,13 @@ def write_bz_attachments(attachments, path):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Please include a BZ bug number")
-        sys.exit(1)
+    parser = ArgumentParser(description="Download and save "
+                                        "Bugzilla attachments")
+    parser.add_argument("bug_number", dest="bugno", required=True,
+                        help="Bugzilla bug ID")
+    args = parser.parse_args()
 
-    bugno = sys.argv[1]
     session = open_session()
-    att = get_bz_attachments(session, bugno)
-    write_bz_attachments(att, Path(Path.home(), Path('bugzilla'), Path(bugno)))
+    att = get_bz_attachments(session, args.bugno)
+    write_bz_attachments(att, Path(Path.home(), Path('bugzilla'),
+                         Path(args.bugno)))
