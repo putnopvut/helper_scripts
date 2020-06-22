@@ -30,15 +30,27 @@ from utilities import open_session, search_bz
 
 if __name__ == '__main__':
     search_fields = [
-        "summary",
-        "status",
-        "product",
+        "assigned_to",
         "component",
+        "creator",
+        "platform",
+        "priority",
+        "product",
+        "qa_contact",
+        "resolution",
+        "severity",
+        "status",
+        "summary",
+        "tags",
+        "target_milestone",
+        "url",
+        "version",
+        "whiteboard",
     ]
     parser = ArgumentParser(description="Search for bugs")
     for field in search_fields:
         parser.add_argument(f'--{field}',
-                            help=f'Bugzilla {field} field')
+                            help=f"Bugzilla '{field}' field")
 
     args = parser.parse_args()
     params = {}
