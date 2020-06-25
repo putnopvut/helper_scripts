@@ -29,14 +29,14 @@ from utilities import open_session, set_bz_flag
 
 if __name__ == '__main__':
     parser = ArgumentParser(description="Set a flag on a bug")
-    parser.add_argument('bug_number', dest='bugno', required=True,
+    parser.add_argument('bug_number',
                         help="Bugzilla bug ID")
-    parser.add_argument('flag_name', required=True,
+    parser.add_argument('flag_name',
                         help="Name of flag to set")
-    parser.add_argument('flag_value', dest='flag_val', required=True,
+    parser.add_argument('flag_value',
                         help="Value of flag to set")
     args = parser.parse_args()
 
     session = open_session()
 
-    set_bz_flag(session, args.bugno, args.flag_name, args.flag_val)
+    set_bz_flag(session, args.bug_number, args.flag_name, args.flag_value)
