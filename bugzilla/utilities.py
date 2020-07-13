@@ -53,3 +53,14 @@ def search_bz(session, params):
     r = session.get(f'{REST_URL}/bug', params=params)
     r.raise_for_status()
     return r.json()['bugs']
+
+
+def get_bz_bugs(session, bugs):
+    bug_str = ','.join(bugs)
+    return search_bz(session, {'id', bug_str})
+
+
+def get_bz_bug(session, bugno):
+    r = session.get(f'{REST_URL}/bug/{bugno}')
+    r.raise_for_status()
+    return r.json()['bugs'][0]
