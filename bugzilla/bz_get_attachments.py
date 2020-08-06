@@ -54,8 +54,7 @@ def write_bz_attachments(attachments, path):
 if __name__ == '__main__':
     parser = ArgumentParser(description="Download and save "
                                         "Bugzilla attachments")
-    parser.add_argument("bug_number", dest="bugno", required=True,
-                        help="Bugzilla bug ID")
+    parser.add_argument("bugno", help="Bugzilla bug ID")
     args = parser.parse_args()
 
     session = open_session()
