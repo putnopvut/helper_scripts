@@ -2,5 +2,5 @@
 
 for bug in "$@"
 do
-	./bz_set_flags.py "$bug" fast-datapath-rhel-7 +
+	./bz_set_flags.py "$bug" fast-datapath-rhel-8 +
 done
